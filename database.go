@@ -20,7 +20,7 @@ type database struct {
 	name string
 
 	policies          map[string]*RetentionPolicy // retention policies by name
-	continuousQueries []*ContinuousQuery          // continuous queries by name
+	continuousQueries []*ContinuousQuery          // continuous queries
 
 	defaultRetentionPolicy string
 
@@ -48,15 +48,6 @@ func (db *database) shardGroupByTimestamp(policy string, timestamp time.Time) (*
 		return nil, ErrRetentionPolicyNotFound
 	}
 	return p.shardGroupByTimestamp(timestamp), nil
-}
-
-// MeasurementNames returns a list of measurement names.
-func (db *database) MeasurementNames() []string {
-	names := make([]string, 0, len(db.measurements))
-	for k := range db.measurements {
-		names = append(names, k)
-	}
-	return names
 }
 
 // Series takes a series ID and returns a series.
@@ -1023,13 +1014,13 @@ func (db *database) MeasurementAndSeries(name string, tags map[string]string) (*
 	return idx, idx.seriesByTags(tags)
 }
 
-// SereiesByID returns the Series that has the given id.
+// SeriesByID returns the Series that has the given id.
 func (d *database) SeriesByID(id uint32) *Series {
 	return d.series[id]
 }
 
 // Names returns all measurement names in sorted order.
-func (d *database) Names() []string {
+func (d *database) MeasurementNames() []string {
 	return d.names
 }
 
